@@ -1,266 +1,108 @@
-LMK if yall can see this
-yep -jerome
+# 🌋 Project Nacme: Badlands
 
-Ishaan was here
+## Multi-Hazard Early Warning and Readiness Network
 
-/**********\***********
+Badlands has evolved into a multi-hazard early warning and readiness network that blends satellite detection, local forecasting, and community-level action for wildfires, floods, storms, heatwaves, earthquakes, and more.
 
-- STARFIELD (black sky + twinkle)
-  **********\***********/
-  const canvas = document.getElementById('stars');
-  const ctx = canvas.getContext('2d');
-  let stars = [];
+## 🌎 Core Idea
 
-function resize() {
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-const n = Math.min(300, Math.floor((canvas.width _ canvas.height) / 11000));
-stars = Array.from({ length: n }, () => ({
-x: Math.random() _ canvas.width,
-y: Math.random() _ canvas.height,
-r: Math.random() _ 1.3 + 0.3,
-tw: Math.random() _ 0.05 + 0.01,
-p: Math.random() _ Math.PI _ 2,
-hue: 210 + Math.random() _ 40, // cool white/blue tone variety
-}));
-}
-function drawStars(t = 0) {
-ctx.clearRect(0, 0, canvas.width, canvas.height);
-for (const s of stars) {
-const a = 0.55 + Math.sin(t _ s.tw + s.p) _ 0.35; // twinkle
-ctx.globalAlpha = a;
-ctx.fillStyle = `hsl(${s.hue} 100% 90%)`;
-ctx.beginPath();
-ctx.arc(s.x, s.y, s.r, 0, Math.PI \* 2);
-ctx.fill();
-}
-requestAnimationFrame(drawStars);
-}
-window.addEventListener('resize', resize);
-resize();
-requestAnimationFrame(drawStars);
+Badlands is an intelligent disaster awareness and readiness platform that fuses satellite intelligence, ground data, and community inputs into one system. It doesn’t just detect disasters — it predicts, localizes, and helps people act early.
 
-/**********\***********
+Each community receives a live Hazard Index (HZ Index) — a simple number (0–10) representing the combined local risk level — and personalized guidance for prevention, preparation, and evacuation.
 
-- HZ INDEX DEMO (animated value)
-  **********\***********/
-  const hzValEl = document.getElementById('hz-val');
-  const hzRiskEl = document.getElementById('hz-risk');
-  const tryBtn = document.getElementById('try-demo');
+## 🛰️ What Makes Badlands Different
 
-function riskFromValue(v) {
-if (v <= 3) return { label: 'Safe', color: '#146b46' };
-if (v <= 6) return { label: 'Moderate', color: '#d97706' };
-if (v <= 8) return { label: 'High Risk', color: '#f97316' };
-return { label: 'Extreme', color: '#e24f40' };
-}
-function animateHZ(toVal) {
-const from = parseFloat(hzValEl.textContent) || 5.0;
-const start = performance.now();
-const dur = 700;
-function tick(now) {
-const k = Math.min(1, (now - start) / dur);
-const v = from + (toVal - from) _ k;
-const risk = riskFromValue(v);
-hzValEl.textContent = v.toFixed(1);
-hzRiskEl.textContent = risk.label;
-hzRiskEl.style.color = risk.color;
-if (k < 1) requestAnimationFrame(tick);
-}
-requestAnimationFrame(tick);
-}
-tryBtn.addEventListener('click', () => {
-const target = Math.max(0, Math.min(10, 3 + Math.random() _ 7));
-animateHZ(target);
-document.getElementById('mapEl').scrollIntoView({ behavior: 'smooth' });
-});
+### 1. Local “Satellite + Earth Data” Fusion Model
 
-/**********\***********
+Most systems focus on single hazards. Badlands fuses multiple data sources across events:
 
-- LEAFLET MAP (FREE, OSM)
-  **********\***********/
-  let map;
-  let userLat = 43.653; // Default to Toronto
-  let userLon = -79.383; // Default to Toronto
+- **Satellites:** VIIRS, Sentinel-2, MODIS, GOES
+- **Weather APIs:** Humidity, rainfall, temperature, wind (Open Weather Map API), NASA Earthdata for natural disaster info.
+- **Geospatial layers:** topography, river basins, vegetation, soil moisture, seismic zones
+- **Human inputs:** local reports and observations
 
-function getLocation() {
-if (navigator.geolocation) {
-navigator.geolocation.getCurrentPosition(
-(position) => {
-userLat = position.coords.latitude;
-userLon = position.coords.longitude;
-localStorage.setItem('userLat', userLat);
-localStorage.setItem('userLon', userLon);
-console.log('Location obtained:', userLat, userLon);
-// Re-initialize map with new location if it's already loaded
-if (map) {
-map.setView([userLat, userLon], 10);
-}
-},
-(error) => {
-console.error('Error getting location:', error);
-// Fallback to stored location if available
-const storedLat = localStorage.getItem('userLat');
-const storedLon = localStorage.getItem('userLon');
-if (storedLat && storedLon) {
-userLat = parseFloat(storedLat);
-userLon = parseFloat(storedLon);
-console.log('Using stored location:', userLat, userLon);
-if (map) {
-map.setView([userLat, userLon], 10);
-}
-}
-}
-);
-} else {
-console.log('Geolocation is not supported by this browser.');
-// Fallback to stored location if available
-const storedLat = localStorage.getItem('userLat');
-const storedLon = localStorage.getItem('userLon');
-if (storedLat && storedLon) {
-userLat = parseFloat(storedLat);
-userLon = parseFloat(storedLon);
-console.log('Using stored location:', userLat, userLon);
-}
-}
-}
+This creates a dynamic multi-hazard risk map that updates every few hours, even before an event is detected.
 
-function initMap() {
-// Try to get location from localStorage first
-const storedLat = localStorage.getItem('userLat');
-const storedLon = localStorage.getItem('userLon');
-if (storedLat && storedLon) {
-userLat = parseFloat(storedLat);
-userLon = parseFloat(storedLon);
-console.log('Using stored location for map init:', userLat, userLon);
-} else {
-// If not in localStorage, try to get current location
-getLocation();
-}
+### 2. Community-Level Hazard Index (HZ Index)
 
-    map = L.map('mapEl').setView([userLat, userLon], 10);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    	maxZoom: 19,
-    	attribution:
-    		'&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
-    }).addTo(map);
+Instead of just showing “alert” or “no alert,” users see a real-time HZ Index (0–10) for their exact area:
 
-    // Demo HZ bubbles
-    const demo = [
-    	{ lat: 43.7, lon: -79.4, hz: 6.8 },
-    	{ lat: 43.63, lon: -79.3, hz: 7.9 },
-    	{ lat: 43.58, lon: -79.55, hz: 4.2 },
-    ];
-    demo.forEach((p) => {
-    	const risk = riskFromValue(p.hz);
-    	L.circle([p.lat, p.lon], {
-    		radius: 2000 + p.hz * 400,
-    		color: risk.color,
-    		weight: 2,
-    		fillColor: risk.color,
-    		fillOpacity: 0.15,
-    	})
-    		.addTo(map)
-    		.bindPopup(`<b>HZ ${p.hz.toFixed(1)}</b><br>${risk.label}`);
-    });
+| Range | Risk Level | Meaning                                     |
+| :---- | :--------- | :------------------------------------------ |
+| 0–3   | Safe       | Normal conditions                           |
+| 4–6   | Moderate   | Watch for advisories                        |
+| 7–8   | High       | Prepare defensible space / emergency kit    |
+| 9–10  | Extreme    | High likelihood of disaster or nearby event |
 
-}
-window.addEventListener('load', initMap);
+Each level includes localized, plain-language guidance — like: “Check for flood advisories,” “Secure outdoor equipment,” or “Move valuables to higher ground.” When risk spikes, the app shows nearby shelters, hospitals, and evacuation routes automatically.
 
-/**********\***********
+### 3. “Prevent Before You Panic” Network
 
-- NEWSLETTER / ALERTS (FREE)
-- - Default: store locally (no backend)
-- - Optional: send to Formspree (free) by setting FORMSPREE_ID
-    **********\***********/
-    const FORMSPREE_ID = ''; // e.g. "xyzzabcd" from https://formspree.io (leave blank to skip)
-    const newsletterForm = document.getElementById('newsletter-form');
-    const toast = document.getElementById('newsletter-msg');
+Badlands empowers local action before official alerts arrive. Residents, volunteers, and emergency responders can:
 
-newsletterForm.addEventListener('submit', async (e) => {
-e.preventDefault();
-const email = document.getElementById('email').value.trim();
-const threshold = document.getElementById('threshold').value;
+- Report hazards (smoke, flash floods, cracked infrastructure, landslides).
+- Get verified feedback through satellite and ground sensors.
 
-    // Local persistence (free)
-    const subs = JSON.parse(localStorage.getItem('badlands_subs') || '[]');
-    subs.push({ email, threshold, ts: Date.now() });
-    localStorage.setItem('badlands_subs', JSON.stringify(subs));
+This creates a human–satellite hybrid detection network, accelerating early warnings.
 
-    // Optional free submit
-    if (FORMSPREE_ID) {
-    	try {
-    		await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
-    			method: 'POST',
-    			headers: { Accept: 'application/json' },
-    			body: new FormData(newsletterForm),
-    		});
-    	} catch (err) {
-    		console.warn('Formspree send failed (still saved locally).', err);
-    	}
-    }
+### 4. Offline Readiness Mode
 
-    toast.textContent = `Subscribed ${email} • HZ ≥ ${threshold}.`;
-    toast.style.display = 'inline-block';
-    newsletterForm.reset();
+In rural or disaster-prone zones with poor connectivity:
 
-});
+- Badlands downloads 48 hours of risk data whenever online.
 
-/**********\***********
+### 5. Adaptive Alert Prioritization
 
-- AI CHAT HOOK (optional, local FastAPI)
-  **********\***********/
-  async function askAI(prompt) {
-  try {
-  const res = await fetch('http://localhost:8000/aichat/', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ message: prompt }),
-  });
-  const data = await res.json();
-  if (data && data.response) return data.response;
-  } catch (e) {
-  console.error(e);
-  }
-  return 'Error: Could not get a response from AI.';
-  }
+No more one-size-fits-all alerts. Badlands personalizes warnings based on:
 
-const chatPopup = document.getElementById('chat-popup');
-const openChatBtn = document.getElementById('open-chat-btn');
-const closeChatBtn = document.getElementById('close-chat');
-const chatBody = document.getElementById('chat-body');
-const chatInput = document.getElementById('chat-input');
-const chatSubmit = document.getElementById('chat-submit');
+- Distance from the hazard
+- Forecast path (e.g., floodwater, fire, or storm trajectory)
+- Accessibility (road blockages, elevation)
+- User type (homeowner, farmer, hiker, driver)
 
-openChatBtn.addEventListener('click', () => (chatPopup.style.display = 'flex'));
-closeChatBtn.addEventListener(
-'click',
-() => (chatPopup.style.display = 'none')
-);
-chatSubmit.addEventListener('click', sendMessage);
-chatInput.addEventListener('keypress', (e) => {
-if (e.key === 'Enter') sendMessage();
-});
+You get actionable alerts — not just sirens.
 
-async function sendMessage() {
-const userMessage = chatInput.value.trim();
-if (!userMessage) return;
-appendMessage(userMessage, 'user');
-chatInput.value = '';
+### 6. AI-Driven Verification Layer
 
-    const currentLat = localStorage.getItem('userLat') || userLat;
-    const currentLon = localStorage.getItem('userLon') || userLon;
+To reduce false alarms, Badlands uses an AI filter that checks:
 
-    const promptWithLocation = `User message: "${userMessage}". Current location: Latitude ${currentLat}, Longitude ${currentLon}.`;
+- **Persistence:** Does the hazard remain across time intervals?
+- **Context:** land type, water presence, population density
+- **Historical patterns:** previous disaster occurrences
 
-    const aiResponse = await askAI(promptWithLocation);
-    appendMessage(aiResponse, 'ai');
+This ensures accuracy before alerts reach the public.
 
-}
-function appendMessage(message, sender) {
-const el = document.createElement('div');
-el.classList.add('message', sender);
-el.textContent = message;
-chatBody.appendChild(el);
-chatBody.scrollTop = chatBody.scrollHeight;
-}
+## 🧩 Implementation Plan (Hackathon-Scale)
+
+### Phase 1 (MVP, 48 hours)
+
+- Integrate real-time data (NASA FIRMS, OpenWeather, flood/storm APIs)
+- Generate a sample HZ Index heatmap for a pilot region
+- Send mock alerts with localized preparation steps
+- Add AI verification for false positives
+- Build offline-ready hazard maps for low-signal regions
+
+### Phase 2 (Post-hack Expansion)
+
+- Enable crowdsourced hazard reports
+- Create an app so that when offline, users receive vibration, tone, or light-based alerts when new hazards are predicted or nearby.
+
+## 🚀 Differentiator Summary
+
+| Category     | Existing Systems                    | Badlands                                        |
+| :----------- | :---------------------------------- | :---------------------------------------------- |
+| Detection    | Hazard-specific (fire, flood, etc.) | Multi-hazard fusion (fire, flood, storm, quake) |
+| Data Sources | Satellite-only                      | Satellite + weather + terrain + human reports   |
+| Alerts       | Broad regional                      | Personalized & adaptive                         |
+| Focus        | Government & agencies               | Everyday community readiness                    |
+| Prediction   | Reactive (after the event starts)   | Proactive (before ignition, flood, or storm)    |
+| Readiness    | Limited                             | Step-by-step community guidance                 |
+| Connectivity | Online-only                         | Works offline with cached data                  |
+
+## 👥 Team
+
+- **Dulmi:** Presentation
+- **Sidak:** Frontend
+- **Jerome:** Frontend
+- **Omar:** Presentation
+- **Ishaan:** Backend
