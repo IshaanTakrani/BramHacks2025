@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Badlands</title>
+
+		<!-- Leaflet (FREE, OSM) -->
+		<link
+			rel="stylesheet"
+			href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+			integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+			crossorigin=""
+		/>
+		<script
+			src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+			integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+			crossorigin=""
+			defer
+		></script>
+
+		<link rel="stylesheet" href="styles.css" />
+		<script defer src="script.js"></script>
+	</head>
+
+	<body>
+		<!-- STARFIELD + SATELLITE ANIM -->
+		<canvas id="stars" aria-hidden="true"></canvas>
+		<div class="satellite-orbit" aria-hidden="true">
+			<svg class="satellite" viewBox="0 0 120 120" width="64" height="64">
+				<g transform="translate(60,60)">
+					<rect x="-8" y="-8" width="16" height="16" rx="2" fill="#60a5fa" />
+					<rect x="-28" y="-6" width="14" height="12" fill="#94a3b8" />
+					<rect x="14" y="-6" width="14" height="12" fill="#94a3b8" />
+					<circle r="3" fill="#38bdf8" />
+					<rect x="-2" y="-22" width="4" height="10" fill="#94a3b8" />
+					<rect x="-2" y="12" width="4" height="10" fill="#94a3b8" />
+				</g>
+			</svg>
+		</div>
+
+		<!-- NAV -->
+		<header>
+			<div class="logo">BADLANDS</div>
+			<nav>
+				<a href="#how">How it Works</a>
+				<a href="#hz">HZ Index</a>
+				<a href="#map">Map</a>
+				<a href="#alerts">Alerts</a>
+				<a href="#contact">Contact</a>
+			</nav>
+		</header>
+
+		<!-- HERO -->
+		<section class="hero" id="hz">
+			<div class="hero-text">
+				<h1>Multi-Hazard Early Warning for Every Community</h1>
+				<p>
+					Badlands blends satellite detection, terrain, and local forecasting to
+					predict, localize, and guide action for wildfires, floods, storms,
+					heatwaves, earthquakes, and more — all simplified into one clear
+					score: the HZ Index.
+				</p>
+				<button class="btn" id="try-demo">Try Demo</button>
+			</div>
+
+			<div class="hz-card" aria-live="polite">
+				<div class="hz-subtitle">Your Local Hazard Index</div>
+				<div class="hz-value" id="hz-val">7.4</div>
+				<div class="risk-level" id="hz-risk">High Risk</div>
+				<p class="hz-note">
+					Prepare &amp; stay alert. View nearby shelters &amp; safe routes.
+				</p>
+			</div>
+		</section>
+
+		<!-- HOW IT WORKS -->
+		<section id="how" class="section">
+			<h2>How it Works</h2>
+			<p class="lead">
+				Local fusion of satellite, weather, terrain, and community inputs to
+				calculate a single HZ Index with plain-language guidance.
+			</p>
+			<div class="cards">
+				<div class="card">
+					<h3>Detect &amp; Predict</h3>
+					<p>
+						Ingest VIIRS/MODIS hotspots, Sentinel bands, GOES imagery plus
+						weather to forecast hazard probability in the next 6–24h.
+					</p>
+				</div>
+				<div class="card">
+					<h3>Score What Matters</h3>
+					<p>
+						A single HZ Index (0–10) communicates combined risk:
+						<em>Safe</em>, <em>Moderate</em>, <em>High</em>, or
+						<em>Extreme</em>.
+					</p>
+				</div>
+				<div class="card">
+					<h3>Act Early</h3>
+					<p>
+						Adaptive alerts by distance, trajectory, elevation, and access with
+						shelters &amp; routes attached.
+					</p>
+				</div>
+			</div>
+		</section>
+
+		<!-- MAP (FREE via Leaflet + OSM) -->
+		<section id="map" class="section">
+			<h2>Live Map &amp; HZ Index</h2>
+			<div id="mapEl" class="map"></div>
+		</section>
+
+		<!-- ALERTS / NEWSLETTER -->
+		<section id="alerts" class="section">
+			<h2>Get Local Alerts</h2>
+			<p class="lead">
+				Subscribe to receive email updates when your area’s HZ Index crosses a
+				threshold.
+			</p>
+			<form id="newsletter-form" class="newsletter" autocomplete="on">
+				<input
+					required
+					type="email"
+					id="email"
+					name="email"
+					placeholder="you@example.com"
+					aria-label="Email address"
+				/>
+				<select id="threshold" aria-label="HZ threshold">
+					<option value="6">Notify at HZ ≥ 6 (High)</option>
+					<option value="8">Notify at HZ ≥ 8 (Very High)</option>
+					<option value="9">Notify at HZ ≥ 9 (Extreme)</option>
+				</select>
+				<button class="btn" type="submit">Subscribe</button>
+			</form>
+			<p class="tiny">
+				* By default we store your preference locally (no server needed). To
+				collect emails, plug in a free endpoint (e.g., Formspree) in
+				<code>script.js</code>.
+			</p>
+			<div
+				id="newsletter-msg"
+				class="toast"
+				role="status"
+				aria-live="polite"
+			></div>
+		</section>
+
+		<!-- CONTACT / FOOTER -->
+		<footer id="contact">
+			<div class="footer-inner">
+				<div>
+					<h3>Contact</h3>
+					<p>
+						Interested in piloting Badlands in your community? Email
+						<a href="mailto:team@badlands.io">team@badlands.io</a>
+					</p>
+				</div>
+				<div class="links">
+					<a href="#" class="btn secondary">Docs</a>
+					<a href="#" class="btn secondary">GitHub</a>
+				</div>
+			</div>
+		</footer>
+
+		<!-- AI CHAT -->
+		<div class="chat-popup" id="chat-popup" aria-modal="true" role="dialog">
+			<div class="chat-header">
+				<h2>AI Chat</h2>
+				<button id="close-chat" class="close-btn" aria-label="Close chat">
+					&times;
+				</button>
+			</div>
+			<div class="chat-body" id="chat-body"></div>
+			<div class="chat-footer">
+				<input
+					type="text"
+					id="chat-input"
+					placeholder="Type your message..."
+					aria-label="Message"
+				/>
+				<button id="chat-submit" class="btn">Send</button>
+			</div>
+		</div>
+		<button class="open-chat-btn" id="open-chat-btn" aria-controls="chat-popup">
+			AI Chat
+		</button>
+	</body>
+</html>

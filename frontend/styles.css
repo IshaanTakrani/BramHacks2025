@@ -1,0 +1,437 @@
+/* Base */
+:root {
+	--green: #146b46;
+	--green-700: #0e5234;
+	--bg: #0b1220; /* deep night fallback (not visible—canvas covers) */
+	--ink: #1b1b1b;
+}
+
+* {
+	box-sizing: border-box;
+}
+html,
+body {
+	height: 100%;
+}
+body {
+	margin: 0;
+	font-family: Arial, Helvetica, sans-serif;
+	background: var(--bg);
+	color: var(--ink);
+	overflow-x: hidden;
+}
+
+/* Starfield canvas behind everything */
+#stars {
+	position: fixed;
+	inset: 0;
+	z-index: -2;
+	pointer-events: none;
+	/* black space background with subtle nebula vignette */
+	background: radial-gradient(
+			900px 600px at 25% 20%,
+			rgba(30, 58, 138, 0.25),
+			transparent 60%
+		),
+		radial-gradient(
+			700px 500px at 80% 10%,
+			rgba(147, 51, 234, 0.15),
+			transparent 60%
+		),
+		#000; /* base black */
+}
+
+/* Satellite orbit */
+.satellite-orbit {
+	position: fixed;
+	top: 8vh;
+	right: 10vw;
+	width: 260px;
+	height: 260px;
+	z-index: -1;
+	pointer-events: none;
+	opacity: 0.9;
+}
+.satellite {
+	position: absolute;
+	top: 0;
+	left: 0;
+	animation: orbit 14s linear infinite;
+	filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.25));
+}
+@keyframes orbit {
+	0% {
+		transform: translate(120px, 0px) rotate(0deg);
+	}
+	25% {
+		transform: translate(240px, 70px) rotate(90deg);
+	}
+	50% {
+		transform: translate(120px, 140px) rotate(180deg);
+	}
+	75% {
+		transform: translate(0px, 70px) rotate(270deg);
+	}
+	100% {
+		transform: translate(120px, 0px) rotate(360deg);
+	}
+}
+
+/* Header */
+header {
+	padding: 18px 50px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background: #fff;
+	border-bottom: 1px solid #c9c9c9;
+	position: sticky;
+	top: 0;
+	z-index: 10;
+}
+.logo {
+	font-size: 26px;
+	font-weight: 800;
+	color: var(--green);
+}
+nav a {
+	margin-left: 22px;
+	text-decoration: none;
+	color: #333;
+	font-weight: 500;
+}
+nav a:hover {
+	color: var(--green);
+}
+
+/* Hero */
+.hero {
+	padding: 100px 50px 60px;
+	display: flex;
+	gap: 60px;
+	align-items: center;
+	justify-content: center;
+	min-height: 60vh;
+}
+.hero-text {
+	max-width: 560px;
+}
+.hero-text h1 {
+	font-size: 45px;
+	margin-bottom: 10px;
+}
+.hero-text p {
+	font-size: 18px;
+	line-height: 1.5;
+	margin-bottom: 25px;
+}
+
+.btn {
+	background: var(--green);
+	color: #fff;
+	border: none;
+	padding: 12px 22px;
+	border-radius: 10px;
+	font-size: 15px;
+	cursor: pointer;
+}
+.btn:hover {
+	background: var(--green-700);
+}
+.btn.secondary {
+	background: #fff;
+	color: var(--ink);
+	border: 1px solid #dcdcdc;
+}
+.btn.secondary:hover {
+	background: #f6f6f6;
+}
+
+/* HZ card */
+.hz-card {
+	background: #fff;
+	padding: 30px;
+	border-radius: 20px;
+	border: 1px solid #dcdcdc;
+	width: 280px;
+	text-align: center;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+.hz-subtitle {
+	font-size: 14px;
+	color: #555;
+}
+.hz-value {
+	font-size: 55px;
+	font-weight: 800;
+	margin: 10px 0 5px;
+}
+.risk-level {
+	font-size: 15px;
+	font-weight: bold;
+	color: #e24f40;
+}
+.hz-note {
+	font-size: 12px;
+	color: #666;
+	margin-top: 8px;
+}
+
+/* Sections */
+.section {
+	padding: 70px 50px;
+	background: transparent;
+}
+.section h2 {
+	font-size: 32px;
+	margin-bottom: 10px;
+	color: #111;
+}
+.lead {
+	color: #e5e7eb;
+	max-width: 800px;
+}
+
+/* Cards */
+.cards {
+	margin-top: 18px;
+	display: grid;
+	gap: 16px;
+	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+.card {
+	background: #fffffffa;
+	border: 1px solid #ececec;
+	border-radius: 14px;
+	padding: 16px 18px;
+	box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+}
+
+/* Map */
+.map {
+	width: 100%;
+	height: 480px;
+	border-radius: 16px;
+	border: 1px solid #e0e0e0;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+	overflow: hidden;
+	background: #fff;
+}
+
+/* Newsletter */
+.newsletter {
+	margin-top: 12px;
+	display: flex;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+.newsletter input,
+.newsletter select {
+	padding: 12px 14px;
+	border: 1px solid #dcdcdc;
+	border-radius: 10px;
+	font-size: 15px;
+}
+.toast {
+	margin-top: 10px;
+	color: #0f5132;
+	background: #d1e7dd;
+	border: 1px solid #badbcc;
+	padding: 10px 12px;
+	border-radius: 10px;
+	display: none;
+	width: fit-content;
+}
+.tiny {
+	font-size: 12px;
+	color: #9ca3af;
+	margin-top: 6px;
+}
+
+/* Footer */
+footer {
+	border-top: 1px solid #e5e5e5;
+	padding: 28px 50px 60px;
+	background: #fff;
+}
+.footer-inner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+}
+footer .links {
+	display: flex;
+	gap: 10px;
+}
+
+/* Chat */
+.chat-popup {
+	display: none;
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	width: 350px;
+	height: 450px;
+	background: #fff;
+	border: 1px solid #dcdcdc;
+	border-radius: 15px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+	flex-direction: column;
+	overflow: hidden;
+	z-index: 1000;
+}
+.chat-header {
+	background: var(--green);
+	color: #fff;
+	padding: 15px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.chat-header h2 {
+	margin: 0;
+	font-size: 18px;
+}
+.close-btn {
+	background: none;
+	border: none;
+	color: #fff;
+	font-size: 24px;
+	cursor: pointer;
+}
+.chat-body {
+	flex-grow: 1;
+	padding: 15px;
+	overflow-y: auto;
+	background: #f9f9f9;
+	display: flex;
+	flex-direction: column;
+}
+.chat-footer {
+	display: flex;
+	padding: 15px;
+	border-top: 1px solid #dcdcdc;
+	background: #fff;
+}
+.chat-footer input {
+	flex-grow: 1;
+	padding: 10px;
+	border: 1px solid #dcdcdc;
+	border-radius: 8px;
+	margin-right: 10px;
+	font-size: 14px;
+}
+.open-chat-btn {
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	background: var(--green);
+	color: #fff;
+	border: none;
+	padding: 15px 20px;
+	border-radius: 30px;
+	font-size: 16px;
+	cursor: pointer;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+	z-index: 999;
+}
+.open-chat-btn:hover {
+	background: var(--green-700);
+}
+.message {
+	max-width: 80%;
+	padding: 10px;
+	border-radius: 12px;
+	margin-bottom: 10px;
+	line-height: 1.4;
+}
+.message.user {
+	background: #dcf8c6;
+	align-self: flex-end;
+	border-bottom-right-radius: 2px;
+}
+.message.ai {
+	background: #e0e0e0;
+	align-self: flex-start;
+	border-bottom-left-radius: 2px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+	.hero {
+		flex-direction: column;
+		padding-top: 70px;
+	}
+	.satellite-orbit {
+		display: none;
+	}
+}
+/* --- Make hero copy white over the starfield --- */
+.hero {
+	color: #fff;
+}
+.hero-text h1,
+.hero-text p {
+	color: #fff;
+	text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+/* Keep the HZ card dark-on-light even inside the hero */
+.hz-card {
+	color: #1b1b1b; /* base text */
+}
+.hz-card .hz-subtitle {
+	color: #555;
+}
+.hz-card .hz-note {
+	color: #666;
+}
+.hz-card .risk-level {
+	color: #e24f40;
+} /* keep risk color */
+/* --- Make all section headings & text white on starfield background --- */
+.section h2,
+.section p,
+.section .lead {
+	color: #ffffff !important;
+	text-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+}
+
+/* Cards should stay readable (dark text on white) */
+.card,
+.card h3,
+.card p {
+	color: #1b1b1b !important;
+	text-shadow: none !important;
+}
+
+/* Newsletter input text */
+.newsletter input,
+.newsletter select {
+	color: #1b1b1b;
+	background: #ffffff;
+}
+
+/* "Get Local Alerts" heading stays white */
+#alerts h2 {
+	color: #ffffff !important;
+}
+
+/* Contact area: turn text white BUT keep link readable */
+footer,
+footer p,
+footer h3 {
+	color: #ffffff !important;
+	text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+	background: transparent; /* remove white block behind footer */
+	border-top: none;
+}
+
+/* Contact link highlight */
+footer a {
+	color: #7cc9ff;
+}
+footer a:hover {
+	color: #b7e6ff;
+}
