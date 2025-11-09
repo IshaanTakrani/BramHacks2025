@@ -74,6 +74,7 @@ tryBtn.addEventListener("click", () => {
 let map;
 let userLat = 43.653; // Default to Toronto
 let userLon = -79.383; // Default to Toronto
+let userHz = null; // Store user's hazard index
 
 function getLocation() {
   if (navigator.geolocation) {
@@ -168,6 +169,7 @@ async function getHazardIndex(lat, lon) {
     if (data && data.hz) {
       console.log("Hazard Index:", data.hz);
       animateHZ(data.hz);
+      userHz = data.hz; // Store the fetched HZ value
 
       // Add user's hazard index as a point on the map
       const risk = riskFromValue(data.hz);
@@ -277,7 +279,10 @@ async function sendMessage() {
   const currentLat = localStorage.getItem("userLat") || userLat;
   const currentLon = localStorage.getItem("userLon") || userLon;
 
-  const promptWithLocation = `User message: "${userMessage}". Current location: Latitude ${currentLat}, Longitude ${currentLon}.`;
+  let promptWithLocation = `User message: "${userMessage}". Current location: Latitude ${currentLat}, Longitude ${currentLon}.`;
+  if (userHz !== null) {
+    promptWithLocation += ` User's HZ is: ${userHz.toFixed(1)}.`;
+  }
 
   const aiResponse = await askAI(promptWithLocation);
   appendMessage(aiResponse, "ai");
