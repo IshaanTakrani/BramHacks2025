@@ -38,7 +38,7 @@ async def create_item(aiChatRequest: aiChatRequest):
     return {"response": res}
 
 
-@app.post("/aichat/")
+@app.post("/hz/")
 async def create_item(req: hzIndexRequest):
     hz = calculateHazard(req.lat, req.lon)["hazard_index"]
     print(hz)
